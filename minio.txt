@@ -1,0 +1,76 @@
+## 下载可执行程序
+wget https://dl.min.io/server/minio/release/linux-amd64/minio
+
+## 单机部署
+chmod +x minio
+export MINIO_ACCESS_KEY=minio
+export MINIO_SECRET_KEY=minio
+./minio server /mnt/data{1...64}
+
+## 如何扩容
+- [扩容问题(http://slack.minio.org.cn/question/38)
+- [扩容解决方案](https://github.com/minio/minio/issues/9226)
+
+## 增删改查
+待研究
+
+## 官网
+https://min.io/
+https://docs.min.io/docs/golang-client-quickstart-guide.html
+
+## 常用API
+- GetObject              // 返回对象数据的流，error是读流时经常抛的那些错， 实现了io.reader等
+- PutObject              // 当对象小于128MiB时，直接在一次PUT请求里进行上传。 参数中带进度条
+- CopyObject             // 通过在服务端对已存在的对象进行拷贝，实现新建或者替换对象
+- StatObject             // 获取对象的元数据
+- RemoveObject           // 删除一个对象
+- RemoveObjects          // 从一个input channel里删除一个对象集合
+- RemoveIncompleteUpload // 删除一个未完整上传的对象
+- FPutObject             // 将filePath对应的文件内容上传到一个对象中
+- FGetObject             // 下载并将文件保存到本地文件系统
+- ComposeObject          // 通过使用服务端拷贝实现钭多个源对象合并创建成一个新的对象
+- NewSourceInfo          // 构建一个可用于服务端拷贝操作
+- NewDestinationInfo     // 构建一个用于服务端拷贝操作
+- PutObjectWithContext   // 和PutObject是一样的，不过允许取消请求                 --------------- 可以下载io.reader
+- GetObjectWithContext   // 和GetObject操作是一样的，不过传入了取消请求的contex   --------------- 可以上传io.reader
+- FPutObjectWithContext  // FPutObject操作是一样的，不过允许取消请求
+- FGetObjectWithContext  // 和FGetObject操作是一样的，不过允许取消请求
+- PresignedPutObject     // 生成一个用于HTTP GET操作的presigned URL     --------------------- 获取URL
+- PresignedGetObject     // 生成一个用于HTTP GET操作的presigned URL
+
+## 页面跳转
+https://www.cnblogs.com/yh2924/p/12383317.html
+
+## 网盘资源的过期时间设置
+https://blog.csdn.net/LeonTom/article/details/101511100
+https://blog.csdn.net/LeonTom/article/details/101511100?utm_medium=distribute.pc_aggpage_search_result.none-task-blog-2~all~first_rank_v2~rank_v25-2-101511100.nonecase
+
+## 服务发现操作
+https://www.jianshu.com/p/dbb0623a541d  // etcd查询所有key
+// https://blog.csdn.net/wohu1104/article/details/107923944  降级grpc
+
+etcdctl --endpoints=http://192.168.88.31:2380 get / --prefix --keys-only
+etcdctl --endpoints=http://192.168.88.31:2380 get /micro/registry/go.micro.web/go.micro.web-0b192999-fe3c-44f2-8213-968522a1e877
+etcdctl --endpoints=http://192.168.88.31:2380 get /micro/registry/cimcap.com.srv.asf/cimcap.com.srv.asf-fd31efc5-8b1f-44dd-9602-86f54eec08d8
+
+curl -L http://192.168.88.31:2380/version
+curl -L http://192.168.88.31:2380/members
+
+go get -v google.golang.org/grpc@v1.26.0
+
+
+
+docker run -d -p 9083:8083 -p 9086:8086 --name influxdb 376a04c5c7e5
+
+//https://blog.csdn.net/CSDN_FlyYoung/article/details/89923878
+sudo docker run -d -p 8083:8083 -p8086:8086 --expose 8090 --expose 8099 --name influxDbService influxdb
+
+	-d：deamon，后台启动
+	-p：port, 端口映射，宿主机端口:容器内端口；8083是influxdb的web管理工具端口，8086是influxdb的HTTP API端口
+	--expose：允许容器接受外部传入的数据
+	--name：容器名称，此处为influxDbService
+	influxdb：镜像名
+	
+sudo docker ps -a						# 查看本地运行的docker容器
+
+mc policy set public minio/portrait
